@@ -8,25 +8,28 @@
 class Grid {
 public:
 	// Construtors
-	Grid();
-	void changeMatrixElement(int x, int y, double value) {
-		matrix.at(x).at(y) = value;
-	}
-	void setMatrixValue(double value) {
-		for (size_t i = 0; i < matrix.size(); i++)
-		{
-			std::fill(matrix.at(i).begin(), matrix.at(i).end(), value);
-		}
-	}
-	void setBoundaryValues() {
-		std::fill(matrix.at(0).begin(), matrix.at(0).end(), 0);
-		std::fill(matrix.at(matrix.size() - 1).begin(), matrix.at(matrix.size() - 1).end(), 0);
+	Grid(size_t n, size_t m);
 
-		for (size_t i = 1; i < matrix.size() - 1; i++)
-		{
-			matrix.at(i).at(0) = 0;
-			matrix.at(i).at(matrix.at(i).size() - 1) = 0;
-		}
+	void reset() {
+		for (size_t i = 0; i < N; i++)
+			for (size_t j = 0; j < M; j++)
+				set(i,j,rand()%2*200-100);
+	}
+	
+	void set(int x, int y, double value) {
+		if (x == 0 || y == 0 || x == N - 1 || y == M - 1) return;
+		matrix[x][y] = value;
+	}
+
+
+	double operator()(size_t i, size_t j) {
+		return matrix[i][j];
+	}
+
+	double operator()(size_t i) {
+		const int row = i / M;
+		const int col = i % M;
+		return matrix[row][col];
 	}
 
 	int getN() {
@@ -35,12 +38,7 @@ public:
 	int getM() {
 		return M;
 	}
-	void setN(int n) {
-		N = n;
-	}
-	void setM(int m) {
-		M = m;
-	}
+
 private:
 	// Attributes
 	std::vector<std::vector<double>> matrix;
@@ -66,8 +64,8 @@ public:
 	void onMouse(int x, int y);
 	// Specific Functions
 	void drawObjects();
-	Grid* diffuseTemperatureExplicit();
-	void diffuseTemperatureImplicit();
+	void diffuseTemperatureExplicit();
+	void diffuseTemperatureImplicit(float timestep);
 
 private:
 	// Attributes
@@ -78,8 +76,10 @@ private:
 	Point2D m_trackmouse;
 	Point2D m_oldtrackmouse;
 	//Grid *T; //save results of every time step
-	Grid *T;
+	Grid T;
 	int M, N;
+
+	double alpha;
 };
 
 #endif
