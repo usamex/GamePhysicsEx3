@@ -68,11 +68,19 @@ void DiffusionSimulator::notifyCaseChanged(int testCase)
 	}
 }
 
-void DiffusionSimulator::diffuseTemperatureExplicit() {//add your own parameters
+void DiffusionSimulator::diffuseTemperatureExplicit(float factor) {//add your own parameters
 
 	// to be implemented
 	//make sure that the temperature in boundary cells stays zero
-	
+	Grid newT(T.getN(), T.getM());
+	for (size_t i = 1; i < T.getN() - 1; i++)
+	{
+		for (size_t j = 1; j < T.getM() - 1; j++)
+		{
+			newT.set(i, j, (1 - 4 * factor) * T(i, j) + factor * (T(i + 1, j) + T(i - 1, j) + T(i, j - 1) + T(i, j + 1)));
+		}
+	}
+	T = newT;
 }
 
 void setupB(std::vector<Real>& b, Grid& T) {//add your own parameters
@@ -162,7 +170,7 @@ void DiffusionSimulator::simulateTimestep(float timeStep)
 	{
 	case 0:
 		//delete T;
-		//T = diffuseTemperatureExplicit();
+		diffuseTemperatureExplicit(timeStep * alpha);
 		break;
 	case 1:
 		diffuseTemperatureImplicit(timeStep);

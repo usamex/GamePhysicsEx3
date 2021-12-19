@@ -64,7 +64,7 @@ public:
 	void onMouse(int x, int y);
 	// Specific Functions
 	void drawObjects();
-	void diffuseTemperatureExplicit();
+	void diffuseTemperatureExplicit(float factor);
 	void diffuseTemperatureImplicit(float timestep);
 
 private:
